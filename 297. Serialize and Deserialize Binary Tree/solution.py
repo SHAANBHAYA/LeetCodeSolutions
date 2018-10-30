@@ -6,6 +6,7 @@ class TreeNode(object):
          self.right = None
 
 class Codec:
+    index=0
     def serialize(self, root):
         """Encodes a tree to a single string.
 
@@ -24,7 +25,20 @@ class Codec:
             return serialized_string
         return dfs_serialize(root,serialized_string)
 
+    def deserialize_dfs(self,list_of_data):
 
+        if self.index >= len(list_of_data) == 0:
+            return None
+
+        if list_of_data[self.index] == 'null':
+            self.index += 1
+            return None
+        val = list_of_data[self.index]
+        node = TreeNode(val)
+        self.index += 1
+        node.left = self.deserialize_dfs(list_of_data)
+        node.right = self.deserialize_dfs(list_of_data)
+        return node
 
     def deserialize(self, data):
         """Decodes your encoded data to tree.
@@ -33,27 +47,14 @@ class Codec:
         :rtype: TreeNode
         """
         list_of_data=data.split(',')
-        
-        def deserialize_dfs(list_of_data):
 
-            if len(list_of_data)==0:
-                return None
 
-            if list_of_data[0] == 'null':
-                list_of_data.pop(0)
-                return None
-            val = list_of_data[0]
-            node = TreeNode(val)
-            list_of_data.pop(0)
-            node.left = deserialize_dfs(list_of_data)
-            node.right = deserialize_dfs(list_of_data)
-            return node
-        return deserialize_dfs(list_of_data)
+        return self.deserialize_dfs(list_of_data)
 
 
 
 
 #Your Codec object will be instantiated and called as such:
 codec = Codec()
-root=codec.deserialize("1,2,3,null,null,4,null,None,5,None,None,")
+root=codec.deserialize("1,2,3,null,null,4,null,null,5,null,null,")
 print(codec.serialize(root))
